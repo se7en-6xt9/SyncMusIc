@@ -1,0 +1,196 @@
+/* Color Palette */
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-glass: rgba(20, 20, 20, 0.85);
+  --accent: #7c3aed;
+  --accent-glow: rgba(124, 58, 237, 0.4);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --success: #10b981;
+  --error: #ef4444;
+  --info: #3b82f6;
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+/* Navbar CSS */
+#syncwave-navbar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999999; /* Max z-index */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 50px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 
+              0 0 0 1px rgba(124,58,237,0.1),
+              inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Inter', system-ui, sans-serif;
+  user-select: none;
+}
+
+.sw-drag-handle {
+  cursor: grab;
+  padding: 0 8px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  margin-right: 4px;
+}
+
+.sw-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Minimized state */
+#syncwave-navbar.minimized {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(124, 58, 237, 0.8);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#syncwave-navbar.minimized .sw-btn {
+  display: none;
+}
+
+#syncwave-navbar.minimized::after {
+  content: '👁';
+  font-size: 20px;
+  color: white;
+}
+
+/* Buttons */
+.sw-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 14px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  color: #a0a0a0;
+}
+
+.sw-btn:hover {
+  background: rgba(124, 58, 237, 0.15);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.sw-btn.active {
+  background: rgba(124, 58, 237, 0.25);
+  color: #7c3aed;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
+}
+
+.sw-btn label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.sw-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* PlaySync ON state */
+.sw-playsync.on {
+  background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(124,58,237,0.1));
+  color: #a78bfa;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+}
+
+/* Sync button animation */
+.sw-sync.syncing svg {
+  animation: spin 0.5s ease;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Toast */
+.sw-toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999999999;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.sw-toast.show {
+  animation: slideIn 0.3s ease forwards;
+}
+
+.sw-toast.hide {
+  animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100px); opacity: 0; }
+}
+
+/* Status Indicator */
+.sw-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444; /* Red by default */
+  margin-right: 4px;
+}
+
+.sw-status-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.sw-room-info {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  padding: 0 10px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}

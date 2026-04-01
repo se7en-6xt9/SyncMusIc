@@ -1,0 +1,5 @@
+{
+  "name": "SyncWave",
+  "description": "Real-time synchronized music listening with friends using YouTube.",
+  "requestFramePermissions": ["camera", "microphone"]
+}

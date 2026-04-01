@@ -1,0 +1,21 @@
+{
+  "name": "SyncWave",
+  "short_name": "SyncWave",
+  "description": "Real-time synchronized music listening with friends using YouTube.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/syncwave/192/192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://picsum.photos/seed/syncwave/512/512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

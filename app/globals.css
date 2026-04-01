@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-purple-600: #7c3aed;
+  --color-purple-500: #8b5cf6;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f0f0f;
+}
+
+.dark {
+  --background: #0f0f0f;
+  --foreground: #ffffff;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom range input styling */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #7c3aed;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #7c3aed;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+}

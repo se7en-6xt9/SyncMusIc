@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "fullName": { "type": "string" },
+        "username": { "type": "string" },
+        "gender": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["uid", "fullName", "username"]
+    },
+    "Username": {
+      "title": "Username",
+      "description": "Mapping of username to UID for uniqueness check",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" }
+      },
+      "required": ["uid"]
+    },
+    "Room": {
+      "title": "Room",
+      "description": "Music sync room information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "owner": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "members": { "type": "object" },
+        "state": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["playing", "paused"] },
+            "currentTime": { "type": "number" },
+            "currentVideoId": { "type": "string" },
+            "lastUpdatedBy": { "type": "string" },
+            "lastUpdate": { "type": "number" },
+            "command": { "type": "object" }
+          }
+        }
+      },
+      "required": ["id", "owner", "state"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/usernames/{username}": {
+      "schema": "Username",
+      "description": "Username uniqueness check"
+    },
+    "/rooms/{roomId}": {
+      "schema": "Room",
+      "description": "Sync rooms"
+    }
+  }
+}
