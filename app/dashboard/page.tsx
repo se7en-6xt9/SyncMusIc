@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const { user, profile, loading } = useAuth();
   const [roomCode, setRoomCode] = useState('');
   const [error, setError] = useState('');
+  const [loadingRoom, setLoadingRoom] = useState(false);
   const [activeRoom, setActiveRoom] = useState<any>(null);
   const router = useRouter();
 
@@ -26,50 +27,81 @@ export default function DashboardPage() {
 
   const createRoom = async () => {
     if (!user) return;
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const roomRef = doc(db, `rooms/${code}`);
+    setLoadingRoom(true);
+    setError('');
     
-    const roomData = {
-      id: code,
-      owner: user.uid,
-      createdAt: Date.now(),
-      members: { [user.uid]: true },
-      state: {
-        playing: false,
-        timestamp: 0,
-        videoId: '',
-        updatedBy: user.uid,
-        lastUpdate: Date.now()
+    try {
+      // Generate 6-digit alphanumeric code
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Avoid ambiguous chars
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
       }
-    };
 
-    await setDoc(roomRef, roomData);
-    router.push(`/room/${code}`);
+      const { ref, set, get } = await import('firebase/database');
+      const { rtdb } = await import('@/lib/firebase');
+      
+      const roomRef = ref(rtdb, `rooms/${code}`);
+      const snapshot = await get(roomRef);
+      
+      if (snapshot.exists()) {
+        // Retry once if code exists
+        return createRoom();
+      }
+
+      const roomData = {
+        roomCode: code,
+        createdBy: user.uid,
+        createdAt: Date.now(),
+        members: { [user.uid]: true },
+        sync: {
+          videoId: null,
+          timestamp: 0,
+          playing: false,
+          syncedBy: null,
+          syncedAt: null,
+          title: null,
+          thumbnail: null
+        }
+      };
+
+      await set(roomRef, roomData);
+      router.push(`/room/${code}`);
+    } catch (err: any) {
+      console.error('Error creating room:', err);
+      setError('Failed to create room. Check your connection.');
+      setLoadingRoom(false);
+    }
   };
 
   const joinRoom = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (roomCode.length !== 6) return;
+    const code = roomCode.toUpperCase().trim();
+    if (code.length !== 6) return;
     
-    const roomRef = doc(db, `rooms/${roomCode}`);
-    const roomDoc = await getDoc(roomRef);
-    
-    if (roomDoc.exists()) {
-      const room = roomDoc.data();
-      const members = room.members || {};
-      const memberCount = Object.keys(members).length;
-      
-      if (memberCount >= 2 && !members[user!.uid]) {
-        setError('Room is full (max 2 members)');
-        return;
-      }
+    setLoadingRoom(true);
+    setError('');
 
-      await updateDoc(roomRef, {
-        [`members.${user!.uid}`]: true
-      });
-      router.push(`/room/${roomCode}`);
-    } else {
-      setError('Invalid room code');
+    try {
+      const { ref, get, update } = await import('firebase/database');
+      const { rtdb } = await import('@/lib/firebase');
+      
+      const roomRef = ref(rtdb, `rooms/${code}`);
+      const snapshot = await get(roomRef);
+      
+      if (snapshot.exists()) {
+        await update(ref(rtdb, `rooms/${code}/members`), {
+          [user!.uid]: true
+        });
+        router.push(`/room/${code}`);
+      } else {
+        setError('Room not found');
+        setLoadingRoom(false);
+      }
+    } catch (err: any) {
+      console.error('Error joining room:', err);
+      setError('Failed to join room');
+      setLoadingRoom(false);
     }
   };
 
@@ -140,10 +172,11 @@ export default function DashboardPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={createRoom}
-            className="p-6 bg-gray-50 dark:bg-gray-900 rounded-[2rem] border border-gray-100 dark:border-gray-800 flex flex-col items-center gap-3 text-center"
+            disabled={loadingRoom}
+            className="p-6 bg-gray-50 dark:bg-gray-900 rounded-[2rem] border border-gray-100 dark:border-gray-800 flex flex-col items-center gap-3 text-center disabled:opacity-50"
           >
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-2xl flex items-center justify-center">
-              <Plus size={24} />
+              {loadingRoom ? <div className="w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" /> : <Plus size={24} />}
             </div>
             <div>
               <h4 className="font-bold text-lg">Create Room</h4>
@@ -162,15 +195,16 @@ export default function DashboardPage() {
                   type="text" 
                   placeholder="6-digit code" 
                   maxLength={6}
-                  className="w-full px-4 py-2 bg-white dark:bg-black rounded-xl border border-gray-200 dark:border-gray-800 text-center font-mono text-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  className="w-full px-4 py-2 bg-white dark:bg-black rounded-xl border border-gray-200 dark:border-gray-800 text-center font-mono text-lg focus:outline-none focus:ring-2 focus:ring-purple-600 uppercase"
                   value={roomCode}
-                  onChange={(e) => setRoomCode(e.target.value.replace(/\D/g, ''))}
+                  onChange={(e) => setRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
                 />
                 <button 
                   type="submit"
-                  className="p-2 bg-purple-600 text-white rounded-xl"
+                  disabled={loadingRoom}
+                  className="p-2 bg-purple-600 text-white rounded-xl disabled:opacity-50"
                 >
-                  <ArrowRight size={20} />
+                  {loadingRoom ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowRight size={20} />}
                 </button>
               </div>
               {error && <p className="text-red-500 text-xs mt-2">{error}</p>}

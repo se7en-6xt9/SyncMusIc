@@ -9,7 +9,7 @@ export default function ExtensionPage() {
   const steps = [
     {
       title: "Download Source",
-      description: "Download the extension folder from the AI Studio file explorer (SyncWave-Extension).",
+      description: "Download the extension zip file using the button at the bottom of this page.",
       icon: <Download className="text-purple-600" size={24} />
     },
     {
@@ -19,7 +19,7 @@ export default function ExtensionPage() {
     },
     {
       title: "Load Unpacked",
-      description: "Click 'Load Unpacked' and select the folder you downloaded.",
+      description: "Extract the downloaded zip file, then click 'Load Unpacked' and select the extracted folder.",
       icon: <Puzzle className="text-purple-600" size={24} />
     },
     {
@@ -77,15 +77,16 @@ export default function ExtensionPage() {
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-4">Ready to level up?</h2>
             <p className="text-purple-100 mb-8 max-w-md mx-auto">
-              The extension files are already generated in your project folder. Just download them and follow the steps above.
+              Download the extension as a zip file, extract it, and follow the steps above to install it in your browser.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a 
-                href="/syncwave-extension/README.md" 
-                download 
-                className="px-8 py-4 bg-white text-purple-600 rounded-full font-bold shadow-xl hover:scale-105 transition-transform"
+                href="/api/extension/download" 
+                download="syncwave-extension.zip"
+                className="px-8 py-4 bg-white text-purple-600 rounded-full font-bold shadow-xl hover:scale-105 transition-transform flex items-center gap-2"
               >
-                Download Extension Files
+                <Download size={20} />
+                Download Extension (.zip)
               </a>
             </div>
           </div>
