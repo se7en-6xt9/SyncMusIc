@@ -61,7 +61,13 @@ export default function AuthPage() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === 'auth/popup-closed-by-user') {
+        setError('The sign-in popup was closed before completion. Please try again and ensure popups are allowed for this site.');
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        setError('Only one sign-in popup can be open at a time.');
+      } else {
+        setError(err.message);
+      }
       setLoading(false);
     }
   };

@@ -20,10 +20,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (uid: string) => {
-    const userDoc = await getDoc(doc(db, `users/${uid}`));
-    if (userDoc.exists()) {
-      setProfile(userDoc.data());
-    } else {
+    try {
+      const userDoc = await getDoc(doc(db, `users/${uid}`));
+      if (userDoc.exists()) {
+        setProfile(userDoc.data());
+      } else {
+        setProfile(null);
+      }
+    } catch (err: any) {
+      if (err.message?.includes('the client is offline')) {
+        console.error("Firestore is offline. Check your Firebase configuration in Vercel.");
+      } else {
+        console.error("Error fetching profile:", err);
+      }
       setProfile(null);
     }
   };
